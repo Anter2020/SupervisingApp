@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ProjDB" Class="DataClasses1DataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=DESKTOP-NMRO30H\SQLEXPRESS2017;Initial Catalog=ProjDB;Integrated Security=True" SettingsObjectName="WindowsFormsApplication1.Properties.Settings" SettingsPropertyName="ProjDBConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.alarmes" Member="alarmes">
+    <Type Name="alarme">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="date" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="text" Type="System.String" DbType="NChar(200)" CanBeNull="true" />
+      <Column Name="stationID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

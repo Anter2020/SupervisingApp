@@ -1,0 +1,1098 @@
+﻿@{
+    ViewBag.Title = "countrieDetails";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+
+@model dynamic
+
+@{
+    bool verifrole = User.IsInRole("Admin");
+}
+
+<head>
+    <link rel="stylesheet" href="~/lib/jquery-ui.css" media="screen">
+    <style type="text/css" media="all">
+        @@import "/lib/imgNotes.css";
+    </style>
+    <script type="text/javascript" src="~/lib/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery.mousewheel.js"></script>
+    <script type="text/javascript" src="~/lib/hammer.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery.hammer.js"></script>
+    <script type="text/javascript" src="~/lib/imgViewer.js"></script>
+    <script type="text/javascript" src="~/lib/imgNotes.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+</head>
+
+<body>
+
+    <nav class="w3-sidebar w3-collapse w3-transparent w3-border w3-border-dark-gray w3-animate-left" style="z-index:3;width:15%;height:94%">
+        <div class="w3-container w3-margin-top">
+            <a href="#" onclick="w3_close()" class="w3-hide-large w3-right w3-jumbo w3-padding w3-hover-grey" title="close menu"> <i class="fa fa-remove"></i> </a>
+            <img src=@Model.countrie.flag style="width:45%" class="w3-round">
+            <br />
+            <br />
+            <p>
+                <h4>
+                    <b style="text-transform: uppercase;">@Model.countrie.name</b>
+                </h4>
+            </p>
+        </div>
+
+        <div class="w3-bar-block">
+            <button class="fa fa-list-ul w3-bar-item w3-button w3-padding w3-text-teal w3-padding-small" id="products" data-toggle="modal" data-target="#productModal"> Products</button>
+            <button class="fa fa-list-ul w3-bar-item w3-button w3-padding w3-text-teal w3-padding-small" id="sites" data-toggle="modal" data-target="#siteModal"> Sites</button>
+            <button class="fa fa-list-ul w3-bar-item w3-button w3-padding w3-text-teal w3-padding-small" id="Sequences"> Sequences</button>
+            <div id="SequencesType" style="display: none">
+                <button class="w3-bar-item w3-button w3-padding w3-small" id="FillSequences" data-toggle="modal" data-target="#FillModal"> Fill</button>
+                <button class="w3-bar-item w3-button w3-padding w3-small" id="SupplySequences" data-toggle="modal" data-target="#SupplyModal"> Supply</button>
+            </div>
+            <button class="fa fa-list-ul w3-bar-item w3-button w3-padding w3-text-teal w3-padding-small" id="stations"> Stations</button>
+            <div id="stationslist" style="display: none"></div>
+        </div>
+    </nav>
+
+    <div class="modal" id="productModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Products</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="bodymodal1" class="modal-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in Model.products)
+                            {
+                            <tr>
+                                <th scope="row">@product.id</th>
+                                <td>@product.name</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div id="bodymodal12" class="modal-body" style="display:none">
+                    <form id="addproductform" action="/Welcome/addProduct" method="get">
+                        <table class="w3-table">
+                            <tr>
+                                <th scope="row">Product name</th>
+                                <td>
+                                    <input type="text" class="form-control" name="producttoadd" placeholder="enter new product name" />
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <div id="bodymodal13" class="modal-body" style="display:none">
+                    <form id="deleteproductform" action="/Welcome/deleteproduct" method="get">
+                        <table class="w3-table">
+                            <tr>
+                                <th scope="row">Select product to delete</th>
+                                <td>
+                                    <select id="producttodelete" name="producttodelete" class="custom-select">
+                                        @foreach (var product in Model.products)
+                                        {
+                                        <option>ID: @product.id, @product.name</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <div id="footermodal1" class="modal-footer">
+                    <button id="addtbutton1" class="btn btn-primary">Add</button>
+                    <button id="deletebutton1" class="btn btn-primary">Delete</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                <div id="footermodal12" class="modal-footer" style="display : none">
+                    <button id="prevtbutton12" class="btn btn-primary">Previous</button>
+                    <button id="submitProductAdd" class="btn btn-primary">Submit</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                <div id="footermodal13" class="modal-footer" style="display : none">
+                    <button id="prevtbutton13" class="btn btn-primary">Previous</button>
+                    <button id="submitProductDelete" class="btn btn-primary">Submit</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="siteModal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sites</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="bodymodal2" class="modal-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Contact</th>
+                                <th scope="col">Stations</th>
+                                <th scope="col">Products</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var site in Model.sites)
+                            {
+                            <tr>
+                                <td>@site.id</td>
+                                <td>@site.address</td>
+                                <td>@site.contact</td>
+                                <td>
+                                    <select class="form-control form-control-sm">
+                                        @foreach (var station in site.stationList)
+                                            {
+                                            <option>@station</option>
+                                            }
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-control form-control-sm">
+                                        @foreach (var product in site.productList)
+                                            {
+                                            <option>@product</option>
+                                            }
+                                    </select>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div id="bodymodal22" class="modal-body" style="display : none">
+                    <form id="addsiteform" action="/Welcome/addsite" method="get">
+                        <table class="w3-table">
+                            <tr>
+                                <td>
+                                    <label for="adrsite">Address</label>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" id="adrsite" name="adrsite" placeholder="enter site address" />
+                                    <input type="hidden" name="countrieName" value=@Model.countrie.name />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="contsite">Contact</label>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" id="contsite" name="contsite" placeholder="enter email, phone .." />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">
+                                        <label for="stationsSelect">Select stations to add</label>
+                                        <select multiple="" class="form-control" id="stationsSelect" name="stationsSelect">
+                                            @foreach (var station in Model.stations)
+                                            {
+                                            <option>ID: @station.id, @station.adresse</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <label for="StationsArea">Selected stations</label>
+                                    <textarea class="form-control text-warning" id="StationsArea" rows="3" readonly></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">
+                                        <label for="productsSelect">Select products to add</label>
+                                        <select multiple="" class="form-control" id="productsSelect" name="productsSelect">
+                                            @foreach (var product in Model.products)
+                                            {
+                                            <option>ID: @product.id, @product.name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <label for="ProductsArea">Selected products</label>
+                                        <textarea class="form-control text-warning" id="ProductsArea" rows="3" readonly></textarea>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <div id="bodymodal23" class="modal-body" style="display : none">
+                    <form id="deletesiteform" action="/Welcome/deletesite" method="get">
+                        <table class="w3-table">
+                            <tr>
+                                <td>
+                                    <h6>Select site to delete</h6>
+                                </td>
+                                <td>
+                                    <select id="sitetodelete" name="sitetodelete" class="custom-select">
+                                        @foreach (var site in Model.sites)
+                                        {
+                                        <option>ID: @site.id, @site.address</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <div id="footermodal2" class="modal-footer">
+                    <button id="addtbutton2" class="btn btn-primary">Add</button>
+                    <button id="deletebutton2" class="btn btn-primary">Delete</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                <div id="footermodal22" class="modal-footer" style="display : none">
+                    <button id="prevtbutton22" class="btn btn-primary">Previous</button>
+                    <button id="submitSiteadd" class="btn btn-primary">Submit</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                <div id="footermodal23" class="modal-footer" style="display : none">
+                    <button id="prevtbutton23" class="btn btn-primary">Previous</button>
+                    <button id="submitSitedelete" class="btn btn-primary">Submit</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="FillModal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Fill sequences</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="bodyfooter31">
+                    <div class="modal-body" style="overflow-y: scroll; max-height:500px;">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Site</th>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Quantity (liter)</th>
+                                    <th scope="col">Responsible</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var remp in Model.remplissages)
+                                {
+                                <tr>
+                                    <td>@remp.id</td>
+                                    <td>@remp.date</td>
+                                    <td>@remp.site</td>
+                                    <td>@remp.product</td>
+                                    <td>@remp.qte</td>
+                                    <td>@remp.responsible</td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="addbutton31" class="btn btn-primary">Add</button>
+                        <button id="deletebutton31" class="btn btn-primary">Delete</button>
+                        <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <div id="bodyfooter32" style="display:none">
+                    <form action="/welcome/addFillSeq" method="get">
+                        <div class="modal-body">
+                            <table class="w3-table">
+                                <tr>
+                                    <td>
+                                        <label>Site to fill : </label>
+                                    </td>
+                                    <td>
+                                        <select name="Sitetofill" class="custom-select">
+                                            @foreach (var site in Model.sites)
+                                            {
+                                            <option value=@site.id> @site.address </option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Product : </label>
+                                    </td>
+                                    <td>
+                                        <select name="productToFill" class="custom-select">
+                                            @foreach (var prod in Model.products)
+                                            {
+                                            <option value=@prod.id> @prod.name </option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Quantity (liter) : </label>
+                                    </td>
+                                    <td>
+                                        <input name="qteToFill" type="number" class="form-control" min="0" required />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="prevtbutton32">Previous</button>
+                            <input class="btn btn-primary" type="submit" value="Submit" />
+                            <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="bodyfooter33" style="display:none">
+                    <form action="/welcome/deleteFillSeq" method="get">
+                        <div class="modal-body">
+                            <table class="w3-table">
+                                <tr>
+                                    <td>
+                                        <label>Sequence To Delete : </label>
+                                    </td>
+                                    <td>
+                                        <select name="seqToDelete" class="custom-select">
+                                            @foreach (var remp in Model.remplissages)
+                                            {
+                                            <option value="@remp.id">ID : @remp.id </option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="prevtbutton33">Previous</button>
+                            <input class="btn btn-primary" type="submit" value="Submit" />
+                            <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="SupplyModal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Supply sequences</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="bodyfooter41">
+                    <div class="modal-body" style="overflow-y: scroll; max-height:500px;">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Site</th>
+                                    <th scope="col">Station</th>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Quantity (liter)</th>
+                                    <th scope="col">Responsible</th>
+                                    <th scope="col">State</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var alim in Model.alimentations)
+                                {
+                                <tr>
+                                    <td>@alim.id</td>
+                                    <td>@alim.date</td>
+                                    <td>@alim.site</td>
+                                    <td>@alim.station</td>
+                                    <td>@alim.product</td>
+                                    <td>@alim.qte</td>
+                                    <td>@alim.responsible</td>
+                                    @if (alim.state== "/images/icons/confirmed.png                                                                         ")
+                                        {
+                                        <td><img src=@alim.state width="30" height="30" title="confirmed" /></td>}
+                                        else if (alim.state == "/images/icons/rejected.png                                                                          ")
+                                        {
+                                        <td><img src=@alim.state width="30" height="30" title="rejected" /></td>}
+                                        else
+                                        {
+                                        <td><img src=@alim.state width="30" height="30" title="in progress" /></td>}
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="addbutton41" class="btn btn-primary">Add</button>
+                        <button id="deletebutton41" class="btn btn-primary">Delete</button>
+                        <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <div id="bodyfooter42" style="display:none">
+                    <form action="/welcome/addSupplySeq" method="get" id="form42">
+                        <div class="modal-body">
+                            <table class="w3-table">
+                                <tr>
+                                    <td>
+                                        <label>From site : </label>
+                                    </td>
+                                    <td>
+                                        <select id="fromSite" class="custom-select">
+                                            @foreach (var site in Model.sites)
+                                            {
+                                            <option value=@site.id> @site.address </option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>To station : </label>
+                                    </td>
+                                    <td>
+                                        <select id="toStation" class="custom-select">
+                                            @foreach (var station in Model.stations)
+                                            {
+                                            <option value=@station.id> @station.adresse </option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Product : </label>
+                                    </td>
+                                    <td>
+                                        <select id="productToFill" class="custom-select">
+                                            @foreach (var prod in Model.products)
+                                            {
+                                            <option value=@prod.id> @prod.name </option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Quantity (liter) : </label>
+                                    </td>
+                                    <td>
+                                        <input id="qteToFill" type="number" class="form-control" min="0" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="prevtbutton42">Previous</button>
+                            @*<input class="btn btn-primary" type="submit" value="Submit" />*@
+                            <input class="btn btn-primary" type="button" id="submitbutton42" value="Submit" />
+                            <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="bodyfooter43" style="display:none">
+                    <form action="/welcome/deleteSupplySeq" method="get">
+                        <div class="modal-body">
+                            <table class="w3-table">
+                                <tr>
+                                    <td>
+                                        <label>Sequence To Delete : </label>
+                                    </td>
+                                    <td>
+                                        <select name="seqToDelete" class="custom-select">
+                                            @foreach (var alim in Model.alimentations)
+                                            {
+                                            <option value="@alim.id">ID : @alim.id </option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="prevtbutton43">Previous</button>
+                            <input class="btn btn-primary" type="submit" value="Submit" />
+                            <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w3-main" style="margin-left:15% ;padding:15px">
+        <table cellspacing="0" cellpadding="0" border="0" style="width: 100%; min-width: 320px;">
+            <tr>
+                <td style="padding: 10px">
+                    <div align="center">
+                        <img id="image" src=@Model.countrie.map style="width:80%" />
+                        <br />
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 10px">
+                    <div align="center">
+                        <button id="toggleEdit">Edit</button>
+                        <button id="export">Export</button>
+                        <button id="toggleZoom">Zoom On</button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:center; padding: 10px">
+                    <div id=txt align="center">
+                        @*this division for the export table*@
+                    </div>
+                    <p style="margin:10px 5% 10px 5%;text-align: justify;">
+                        This paragraph demonstrates how to edit stations.
+                    </p>
+                    <p style="margin:10px 5% 10px 5%;text-align: justify;">
+                        Clicking the Edit button toggles the widget into edit mode and clicking the same button toogles back into display mode.
+                    </p>
+                    <p style="margin:10px 5% 10px 5%;text-align: justify;">
+                        In edit mode clicking on the map image will insert a new marker and open up an edit dialog to add station informations.
+                    </p>
+                    <p style="margin:10px 5% 10px 5%;text-align: justify;">
+                        Clicking on an exisiting station will show the edit dialog.
+                    </p>
+                    <p style="margin:10px 5% 10px 5%;text-align: justify;">
+                        The Export button shows stations in a table at the bottom of the map.
+                    </p>
+                    <div align="center">
+                        @using (Html.BeginForm("countrieDetails", "welcome", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                        <label for="postedFile" class="w3-button"><span class="fa fa-map-marker-alt "> Change countrie map</span><br /></label>
+                        <input type="file" name="postedFile" id="postedFile" accept="image/*" required />
+                        <hr />
+                        <input type="hidden" name="countrieName" value=@Model.countrie.name />
+                        <button type="submit" class="btn btn-primary">Submit New Map</button>
+                        }
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+
+        //supply model scripts
+        $('#prevtbutton42').click(function() {
+            $('#bodyfooter42').hide();
+            $('#bodyfooter41').show();
+        })
+
+        $('#submitbutton42').click(function() {
+            //submit form with json (NB POST Method is obligatory in JSON)
+            var supplySequencedata={fromSite:$("#fromSite").val(),toStation:$("#toStation").val(),qteToFill:$("#qteToFill").val(),productToFill:$("#productToFill").val(), error: ""};
+            $.ajax({
+                url: "/welcome/addSupplySeq",
+                type: "POST",
+                contentType:"application/json; charset=utf-8",
+                data: "{supplySequencedata: "+JSON.stringify(supplySequencedata)+"}",
+                success: function (data)
+                {
+                    var error=data.error;
+                    alert(error);}
+            })
+            //$( "#form42" ).submit();
+        })
+
+        $('#addbutton41').click(function() {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                }
+                else {
+                <text>
+            $('#bodyfooter41').hide();
+            $('#bodyfooter42').show();</text>} }
+        })
+
+        $('#prevtbutton43').click(function() {
+            $('#bodyfooter43').hide();
+            $('#bodyfooter41').show();
+        })
+
+        $('#deletebutton41').click(function() {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                }
+                else {
+                <text>
+            $('#bodyfooter41').hide();
+            $('#bodyfooter43').show();</text>} }
+        })
+
+        //fill model scripts
+        $('#prevtbutton32').click(function() {
+            $('#bodyfooter32').hide();
+            $('#bodyfooter31').show();
+        })
+
+        $('#addbutton31').click(function() {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                }
+                else {
+                <text>
+            $('#bodyfooter31').hide();
+            $('#bodyfooter32').show();</text>} }
+        })
+
+        $('#prevtbutton33').click(function() {
+            $('#bodyfooter33').hide();
+            $('#bodyfooter31').show();
+        })
+
+        $('#deletebutton31').click(function() {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                }
+                else {
+                <text>
+            $('#bodyfooter31').hide();
+            $('#bodyfooter33').show();</text>} }
+        })
+
+        //product model scripts
+        $("#submitProductAdd").click(function() {
+            addproductform.submit();
+        })
+        $("#submitProductDelete").click(function(){
+            deleteproductform.submit();
+        })
+        $('#addtbutton1').click(function() {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                            }
+                            else {
+                <text>
+            $('#bodymodal1').hide();
+            $('#bodymodal12').show();
+            $('#footermodal1').hide();
+            $('#footermodal12').show();</text>} }
+        })
+        $('#prevtbutton12').click(function() {
+            $('#bodymodal1').show();
+            $('#bodymodal12').hide();
+            $('#footermodal1').show();
+            $('#footermodal12').hide();
+        })
+        $('#deletebutton1').click(function() {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                                }
+                                else {
+                <text>
+            $('#bodymodal1').hide();
+            $('#bodymodal13').show();
+            $('#footermodal1').hide();
+            $('#footermodal13').show();</text>} }
+        })
+        $('#prevtbutton13').click(function() {
+
+            $('#bodymodal1').show();
+            $('#bodymodal13').hide();
+            $('#footermodal1').show();
+            $('#footermodal13').hide();
+        })
+
+        //site model scripts
+        $("#submitSiteadd").click(function() {
+            addsiteform.submit();
+        })
+        $("#submitSitedelete").click(function(){
+            deletesiteform.submit();
+        })
+        $("#stationsSelect").change(function() {
+            // get assign the values from each text input
+            var myCAPtext = document.getElementById('StationsArea');
+
+            // assign multiple text values
+            var select_1 = $("#stationsSelect").val();
+            var CAPtext = select_1.join("\n");
+            myCAPtext.value = CAPtext;
+        })
+        $("#productsSelect").change(function() {
+            // get assign the values from each text input
+            var myCAPtext = document.getElementById('ProductsArea');
+
+            // assign multiple text values
+            var select_1 = $("#productsSelect").val();
+            var CAPtext = select_1.join("\n");
+            myCAPtext.value = CAPtext;
+        })
+        $('#addtbutton2').click(function() {
+            @{ if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                                    }
+                                    else {
+                <text>
+            $('#bodymodal2').hide();
+            $('#bodymodal22').show();
+            $('#footermodal2').hide();
+            $('#footermodal22').show();</text>} }
+        })
+        $('#prevtbutton22').click(function() {
+
+            $('#bodymodal2').show();
+            $('#bodymodal22').hide();
+            $('#footermodal2').show();
+            $('#footermodal22').hide();
+        })
+        $('#deletebutton2').click(function() {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                                        }
+                                        else {
+                <text>
+            $('#bodymodal2').hide();
+            $('#bodymodal23').show();
+            $('#footermodal2').hide();
+            $('#footermodal23').show();</text>} }
+        })
+        $('#prevtbutton23').click(function() {
+
+            $('#bodymodal2').show();
+            $('#bodymodal23').hide();
+            $('#footermodal2').show();
+            $('#footermodal23').hide();
+        })
+
+        //station markers scripts
+        ; (function ($) {
+
+            $('#select').click(function() {
+                var id = $('#stationslist').val();
+                $('#stationID').val(id);
+
+            })
+
+            $('#stations').click(function() {
+                $("#stationslist").slideToggle("fast");
+            })
+
+            $('#Sequences').click(function() {
+                $("#SequencesType").slideToggle("fast");
+            })
+
+
+
+            var notes = [];
+
+            @foreach (var station in Model.stations)
+            {
+            <text>
+            notes.push({ x:@station.x , y: @station.y, note: "Address: ["+"@station.adresse"+"] Phone: ["+"@station.tel"+"] RespensibleID: ["+"@station.contact"+"]" });
+            $('#stationslist').append('<form id="myform "@station.id"" action="/welcome/stationDetails" method="get">'+
+                                  '<input type="hidden" value="@station.id" name="stationID"/>'+
+                                  '<button class="w3-bar-item w3-button w3-padding w3-small" onclick="myform "@station.id".submit()" > ID:@station.id , @station.adresse </button>'+
+                                  '</form>');
+            </text>
+            }
+
+            $(window).load(function () {
+                var $img = $("#image").imgNotes({
+                    onEdit: function (ev, elem) {
+                        var $elem = $(elem);
+                        $('#NoteDialog').remove();
+                        return $('<div id="NoteDialog"></div>').dialog({
+                            title: "Station informations",
+                            resizable: false,
+                            modal: true,
+                            height: "420",
+                            width: "550",
+                            position: { my: "left bottom", at: "right top", of: elem },
+                            var :i=1,
+                            buttons: [
+                                {text: "Previous",
+                                    click: function() {
+                                        if (i>1)
+                                            i--;
+                                        $('#div'+i).show();
+                                        $('#div'+(i+1)).hide();
+                                        $("#button-next").text("Next");
+                                    }},
+
+                                {text: "Next",
+                                    id: 'button-next',
+                                    click: function() {
+                                        if (i==1){
+                                            //check if address exist already before passing to next (JSON METHOD)
+                                            var address=$('#address', this).val();
+                                            var verif={exist:"false",pay:"@Model.countrie.name",address:address,confirm:false };
+                                            //var verifResp=$('#ID', this).val();
+                                            $.ajax({
+                                                url: "/welcome/VerifAddress",
+                                                type: "POST",
+                                                contentType:"application/json; charset=utf-8",
+                                                data: "{verif:"+JSON.stringify(verif)+"}",
+                                                success: function (data) {
+                                                    var exist=data.exist;
+                                                    if (exist=="false"){
+                                                        $.ajax({
+                                                            url: "/welcome/VerifResponsible",
+                                                            type: "POST",
+                                                            contentType:"application/json; charset=utf-8",
+                                                            data: JSON.stringify({
+                                                                verifResp:$('#ID').val()
+                                                            }),
+                                                            success: function (varReturn) {
+                                                                //if (varReturn=="false")
+                                                                if (varReturn=="true") alert("Reponsible already exist. His informations can be modified only from station interface")
+                                                                /*{
+                                                                    var result=confirm("responsible already exist continue ?")
+                                                                    if (result){} ;
+                                                                }*/
+                                                                i++;
+                                                                $('#div'+i).show();
+                                                                $('#div'+(i-1)).hide();
+                                                                if (i==2){
+                                                                    $('#div2').html('');
+                                                                    var number=$('#num').val();
+                                                                    for (var j=0;j<number;j=j+2)
+                                                                    {
+                                                                        if (j==number-1 && number%2==1)
+                                                                            $('#div2').append('<tr><td style="border: 1px solid black" >Tank' + (j+1) + '</td><td style="border: 1px solid black" > <input id="min'+(j+1)+ '" placeholder="capacity min" type="number"  min="0" style="width:200px"  /><br /><input id="max'+(j+1)+'" placeholder="capacity Max" type="number" min="0" style="width:200px"  /><br />'+
+                                                                                '<select id="prod'+(j+1)+'" style="width:200px"  >'+
+                                                                                    @foreach (var product in Model.products) {
+                                                                                <text>'<option>ID: @product.id, @product.name</option>}'+ </text>
+                                                                            }
+                                                                                '</select></td></tr>');
+                                                                        else
+                                                                            $('#div2').append('<tr><td style="border: 1px solid black" > Tank' + (j+1) + '</td><td style="border: 1px solid black" > <input id="min'+(j+1)+ '" placeholder="capacity min" type="number"  min="0" style="width:200px"  /><br /><input id="max'+(j+1)+'" placeholder="capacity Max" type="number" min="0" style="width:200px"  /><br />'+
+                                                                                '<select id="prod'+(j+1)+'" style="width:200px"  >'+
+                                                                                    @foreach (var product in Model.products) {
+                                                                                <text>'<option>ID: @product.id, @product.name</option>}'+ </text>
+                                                                            }
+                                                                                '</select></td>'+
+                                                                                '<td style="border: 1px solid black" > Tank' + (j+2) + '</td><td style="border: 1px solid black" > <input id="min'+(j+2)+ '" placeholder="capacity min" type="number"  min="0" style="width:200px"  /><br /><input id="max'+(j+2)+'" placeholder="capacity Max" type="number" min="0" style="width:200px"  /><br />'+
+                                                                                '<select id="prod'+(j+2)+'" style="width:200px"  >'+
+                                                                                    @foreach (var product in Model.products) {
+                                                                                <text>'<option>ID: @product.id, @product.name</option>}'+ </text>
+                                                                            }
+                                                                                '</select></td></tr>');
+                                                                    }
+                                                                    $("#button-next").text("Save");
+                                                                }
+                                                            }})}
+                                                    else if (exist=="true") {
+                                                        alert("Address already exist. Please enter different address or delete the existing one");
+                                                    }
+                                                    else if (exist=="empty") {
+                                                        alert("Address cannot be null. Please enter correct address");
+                                                    }}
+                                            });}
+
+                                        if (i==2) i++;
+                                        if (i==3)
+                                        {
+                                            //storing station to database
+                                            var selec=$('#selec').val();
+                                            var num=$('#num').val();
+                                            var resTel=$('#resTel').val();
+                                            var mail=$('#mail').val();
+                                            var address=$('#address').val();
+                                            var tel=$('#tel').val();
+                                            var RespensibleID=$('#ID').val();
+                                            var tanks=[];
+                                            for (k=0;k<num;k++)
+                                            {
+                                                tanks.push({max:$('#max'+(k+1)).val(),min:$('#min'+(k+1)).val(),productID:$('#prod'+(k+1)).val()})
+                                            };
+
+                                            $elem.data("note").note = "Address: ["+address+"] Phone: ["+tel+ "] RespensibleID: ["+RespensibleID+"]";
+                                            var notes = $img.imgNotes('export');
+                                            $.each(notes, function(index, item) {
+                                                $.ajax({
+                                                    url: "/welcome/AddStation",
+                                                    type: "POST",
+                                                    data: {"x" : item.x,"y":item.y,"note":item.note,"pay":"@Model.countrie.name",
+                                                        "address":address,"resTel":resTel,"mail":mail,"selec":selec,"num":num ,
+                                                        "tanks":tanks
+                                                    },
+                                                    error: function() { alert('failed to save changes'); }
+                                                });
+                                            });
+                                            $(this).dialog("close");
+                                            //location.reload();
+                                        };
+                                    }
+                                },
+
+                                {text: "Delete",
+                                    click: function() {
+                                        $(this).dialog("close");
+
+                                        var address=$('#address', this).val();
+                                        //check if address exist already before deleting (JSON METHOD)
+                                        var verif={exist:"false",pay:"@Model.countrie.name",address:address ,confirm:false };
+                                        $.ajax({
+                                            url: "/welcome/VerifAddress",
+                                            type: "POST",
+                                            contentType:"application/json; charset=utf-8",
+                                            data: "{verif:"+JSON.stringify(verif)+"}",
+                                            success: function (data)
+                                            {
+                                                var exist=data.exist;
+                                                //var confirm=data.confirm;
+
+                                                if (exist=="true"){
+                                                    var result= confirm("All data related to this station will be deleted, continue ?");
+                                                    //if (confirm == true){
+                                                    if (result == true){
+                                                        //delete station from database
+                                                        $.ajax({
+                                                            url: "/welcome/deleteStation",
+                                                            type: "POST",
+                                                            data: {"pay":"@Model.countrie.name","address": address },
+                                                            success: function () {
+                                                                $elem.trigger("remove");
+                                                                location.reload();
+                                                            }})
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    alert("Station to delete does not exist")
+                                                    //$elem.trigger("remove");
+                                                }
+                                            }})
+                                    }
+                                }],
+                            open: function () {
+                                $(this).css("overflow", "auto");
+                                var form = $(
+                                    '<div id="div1">'+
+                                    '<table><tr><td>'+
+                                    '<label for="address"  >Address</label></td><td >'+
+                                    '<input type="text" id="address" placeholder="enter address" style="margin-left:100px; width:200px"   /></td></tr><tr><td>'+
+                                    '<label for="tel"  >Station phone</label></td><td >'+
+                                    '<input type="text" id="tel" placeholder="enter phone" style="margin-left:100px; width:200px"  /></td></tr><tr><td>'+
+                                    '<label for="resTel"  >Responsible phone</label></td><td >'+
+                                    '<input type="text" id="resTel" placeholder="enter responsible phone" style="margin-left:100px; width:200px"  /></td></tr><tr><td>'+
+                                    '<label for="mail"  >Responsible email</label></td><td >'+
+                                    '<input type="text" id="mail" placeholder="enter responsible email" style="margin-left:100px; width:200px"  /></td></tr><tr><td>'+
+                                    '<label for="ID"  >Responsible ID</label></td><td >'+
+                                    '<input type="number" id="ID" placeholder="enter responsible ID" style="margin-left:100px; width:200px"  /></td></tr><tr><td>'+
+                                    '<label for="num"  >Tanks number</label></td><td >'+
+                                    '<input type="number" id="num" min="0" placeholder="enter tanks number" style="margin-left:100px; width:200px"  /></td></tr><tr><td>'+
+                                    '<label for="selec"  >Connexion type</label></td><td >'+
+                                    '<select id="selec" style="margin-left:100px; width:200px" >'+
+                                      '<option value="SMS">SMS</option>'+
+                                      '<option value="INTERNET">INTERNET</option>'+
+                                    '</select></td></tr></table>'+
+                                    '</div>'+
+                                    '<table id="div2" style="border: 1px solid black ; padding:20px" > '+
+                                    '</table>'
+                                    );
+                                $(this).html(form).show();
+                                $('#div2', this).hide();
+                                $('#div3', this).hide();
+
+                                //subtract the address from note
+                                var str=$elem.data("note").note;
+                                var pos1= str.search("] Phone");
+                                var adr = str.substring(10, pos1);
+                                var pos2= str.search("] RespensibleID");
+                                var tel = str.substring(pos1+10, pos2);
+                                var pos3= str.length;
+                                var ID = str.substring(pos2+12, pos3-1);
+
+                                $('#address', this).val(adr);
+                                $('#tel', this).val(tel);
+                                $('#ID', this).val(ID);
+                            }
+                        });}
+                });
+
+                $img.imgNotes("import", notes);
+
+                var $toggle = $("#toggleEdit");
+                if ($img.imgNotes("option", "canEdit")) {
+                    $toggle.text("View");
+                } else {
+                    $toggle.text("Edit");
+                }
+                $toggle.on("click", function () {
+                    var $this = $(this);
+                    //verifer le role de l'utilisateur
+                    @{if (!verifrole){
+                        <text> alert('Please login as administrator') </text>
+                            }
+                    else{
+                    <text>if ($this.text() == "Edit") {
+                        $this.text("View");
+                        $img.imgNotes("option", "canEdit", true);
+                    } else {
+                        $this.text('Edit');
+                        $img.imgNotes('option', 'canEdit', false);
+                    }
+                    </text>}
+                    }
+                });
+
+                var $export = $("#export");
+
+                $export.on("click", function () {
+
+                    var $table = $("<table/>").addClass("gridtable");
+                    var notes = $img.imgNotes('export');
+                    $table.append("<th>Address</th><th>Phone</th><th>ResponsibleID</th>");
+
+                    $.each(notes, function(index, item) {
+                        var str=item.note;
+                        var pos1= str.search("] Phone");
+                        var adr = str.substring(10, pos1);
+                        var pos2= str.search("] RespensibleID");
+                        var tel = str.substring(pos1+10, pos2);
+                        var pos3= str.length;
+                        var ID = str.substring(pos2+18, pos3-1);
+
+                        $table.append("<tr><td>" +adr+ "</td><td>" +tel+ "</td><td>" +ID+ "</td></tr>");
+                    });
+                    $('#txt').html($table);
+                });
+
+                var $toggleZ = $("#toggleZoom");
+                if ($img.imgNotes("option", "zoomable"))
+                    $toggleZ.text("Zoom Off");
+                else
+                    $toggleZ.text("Zoom On");
+
+                $toggleZ.on("click", function () {
+                    var $this = $(this);
+                    if ($this.text() == "Zoom On") {
+                        $this.text("Zoom Off");
+                        $img.imgNotes("option", "zoomable", true);
+                    } else {
+                        $this.text("Zoom On");
+                        $img.imgNotes("option", "zoomable", false);
+                    }
+                });
+            });
+
+        })(jQuery);
+
+    </script>
+
+</body>

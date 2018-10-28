@@ -1,0 +1,46 @@
+﻿@model NajmDefault.Models.RegisterViewModel
+@using System.Web.Mvc.Html
+
+<!-- _______________________________________________________________<register-form>_______________________________________________________________-->
+@using (Html.BeginForm("Register", "login", FormMethod.Post, new { @class = "register-form", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group-sm">
+        <i class="fas fa-users"></i>
+        @Html.LabelFor(o => o.Role, new { @style = "font-size: smaller" })
+        @Html.DropDownListFor(o => o.Role, new SelectList(new string[] { "Admin", "Supervisor" }), new { @class = "form-control"})
+    </div>
+    <div class="form-group-sm">
+        <i class="fas fa-lock"></i>
+        @Html.LabelFor(o => o.Security_Code, new { @style = "font-size: smaller" })
+        @Html.PasswordFor(o => o.Security_Code,new { @class = "form-control", @placeholder = "enter security password" })
+    </div>
+    <div class="form-group-sm">
+        @Html.TextBoxFor(o => o.email, null, new { @class = "form-control", @placeholder = "enter email" })
+    </div>
+    <div class="form-group-sm">
+        @Html.PasswordFor(o => o.password, new { @class = "form-control", @placeholder = "new password" })
+    </div>
+    <div class="form-group-sm">
+        @Html.PasswordFor(o => o.ConfirmPassword, new { @class = "form-control", @placeholder = "confirm password" })
+    </div>
+    <div class="form-group-sm">
+        <span class="fa fa-phone"></span>
+        @Html.LabelFor(o => o.Tel, new { @style = "font-size: smaller" })
+        @Html.TextBoxFor(o => o.Tel, null, new { @class = "form-control", @placeholder = "(+999)(999-9999999)", type = "number" })
+    </div>
+    <p align="center" class="message">
+        <br />
+        <input type="submit" class="btn btn-primary btn-sm" name="submit" value="CONFIRM">
+        <a href="#" style="margin-left:10px">login</a>
+    </p>
+}
+
+<script>
+    $('.message a').click(function () {
+        $('form').animate({
+            height: "toggle", opacity: "toggle"
+        }, "slow");
+    });
+</script>

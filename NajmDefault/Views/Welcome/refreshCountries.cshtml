@@ -1,0 +1,29 @@
+﻿@model IEnumerable<NajmDefault.Models.CountrieModel>
+
+@{ Layout = null;}
+
+@if (Model == null)
+{
+    @Html.Action("refreshCountries")
+}
+else
+{
+    //creer des div contenant des pay avec les flags
+    foreach (var countrie in Model)
+    {
+        <div class="card border-light mb-3 " style="width: 30%;min-height :250px; float : left ;margin:1% ">
+            <div class="card-header">
+                <p style="text-transform : uppercase">@countrie.name</p>
+            </div>
+            <div class="card-body w3-center" style="width:40%">
+                @using (Html.BeginForm("countrieDetails", "welcome", FormMethod.Get))
+                    {
+                        //ce formulaire pour chaque div contenant un pay avec un submit "show details " pour transfer les infos de pay a la page countrieDetails
+                <img src=@countrie.flag style="width:100%; margin-bottom:10%" /><br />
+                <input type="submit" class="btn btn-outline-warning btn-sm" value="Show details" />
+                <input type="hidden" name="countrieName" value=@countrie.name />
+                    }
+            </div>
+        </div>
+    }
+}

@@ -1,0 +1,30 @@
+﻿@model NajmDefault.Models.LoginViewModel
+@using System.Web.Mvc.Html
+
+<!-- ________________________________________________________________<form login>__________________________________________________________________-->
+
+@using (Html.BeginForm("userLogin", "login", new { ReturnUrl = "/welcome/home" }, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group">
+        <span class="fa fa-user" aria-hidden="true"></span>
+        <label for="inputUsername">Username</label>
+        @Html.TextBoxFor(m => m.email, null, new { @class = "form-control", @placeholder = "enter username", id = "inputUsername" })
+    </div>
+    <div class="form-group">
+        <span class="fa fa-key" aria-hidden="true"></span>
+        <label for="inputPassword">Password</label>
+        @Html.TextBoxFor(m => m.password, new { @class = "form-control", type = "password", @placeholder = "enter password", id = "inputPassword" })
+    </div>
+    <p align="center">
+        <input type="submit" class="btn btn-primary btn-lg" name="submit" value="LOGIN">
+        <br /><br />
+        <a href="#">Forgot password ?</a>
+    </p>
+    <div class="register">
+        <p class="message">
+            <a href="#">register</a>
+        </p>
+    </div>
+}

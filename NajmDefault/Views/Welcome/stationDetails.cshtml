@@ -1,0 +1,311 @@
+﻿@{
+    ViewBag.Title = "stationDetails";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+
+@model dynamic
+
+@{
+    bool verifrole = User.IsInRole("Admin");
+}
+<body style="margin-top:50px">
+
+    <nav class="w3-sidebar w3-collapse w3-transparent w3-border w3-border-dark-gray w3-animate-left w3-padding" style="z-index:3;width:15%;height:94%">
+        <div class="w3-bar-block">
+            <div class="w3-bar-item  w3-padding w3-small">StationID: @Model.station.id</div>
+            <div class="w3-bar-item  w3-padding w3-small">Countrie: @Model.station.pay</div>
+            <div class="w3-bar-item  w3-padding w3-small">Address: @Model.station.adresse</div>
+            <div class="w3-bar-item  w3-padding w3-small">Phone: @Model.station.tel</div>
+            <div class="w3-bar-item  w3-padding w3-small">ResponsibleID: @Model.responsible.cin</div>
+            <div class="w3-bar-item  w3-padding w3-small">ResponsiblePhone: @Model.responsible.tel</div>
+            <div class="w3-bar-item  w3-padding w3-small">ResponsibleMail: @Model.responsible.email</div>
+            <div class="w3-bar-item  w3-padding w3-small">TanksNumber: @Model.station.tnkNbr</div>
+            <div class="w3-bar-item  w3-padding w3-small">Connexion: @Model.station.connexion</div>
+            <div class="w3-bar-item  w3-padding w3-small">ETAT: @Model.station.etat</div>
+            <div class="w3-bar-item  w3-padding w3-small">STATUT: @Model.station.statut</div>
+        </div>
+    </nav>
+
+    <div style="margin-left:15% ;padding-left:50px ;padding-right:50px">
+        @foreach (var tank in Model.tanks)
+        {
+            <div style="width:500px; height:400px ; float:left" class="w3-border w3-margin  ">
+                <div style="width:450px; height:250px" class="w3-border w3-margin w3-center">
+                    <div class="progress" style="-webkit-transform: rotate(-90deg) translate(-105px,-25px) ;width: 33%">
+                        <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: @tank.niveau%" aria-valuenow="@tank.niveau" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <img src="~/images/icons/oil_tank.png" style="width:90% ;height:80%" />
+                </div>
+                <div style="-webkit-transform:translate(100px,-150px); color:red">Level : @tank.niveau %</div>
+                <div style="-webkit-transform:translate(100px,-150px); color:red">Volume : @tank.niveau L</div>
+                <table class="w3-table " style="-webkit-transform:translate(10px,-50px)">
+                    <tr>
+                        <td><h6>TankID : @tank.id</h6></td>
+                        <td><h6>Poduct : @tank.productName</h6></td>
+                        <td>
+                            <button type="button" class="btn btn-secondary strapbutton">Strapping table</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><h6>min : @tank.min</h6></td>
+                        <td><h6>Max : @tank.max</h6></td>
+                    </tr>
+                </table>
+
+            </div>
+        }
+        <div style="width:350px; height:350px ; float:left ; padding-top:100px" class="w3-border w3-margin w3-center">
+            <img src="~/images/icons/plus.png" style="width:120px ;height:120px" class="w3-hover-opacity" id="plusButton" />
+            <img src="~/images/icons/minus.png" style="width:120px ;height:120px" class="w3-hover-opacity" id="minusButton" />
+        </div>
+    </div>
+
+    <div class="modal" id="addTankModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                @using (Html.BeginForm("addTank", "welcome", FormMethod.Get))
+                {
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add new Tank</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="w3-table">
+                            <tr>
+                                <td><label class="label" for="min">min limit</label></td>
+                                <td><input type="number" class="form-control" name="min" min="0" id="min" placeholder="enter min limit" /> </td>
+                            </tr>
+                            <tr>
+                                <td><label class="label" for="max">Max limit</label></td>
+                                <td><input type="number" class="form-control" name="max" min="0" id="max" placeholder="enter max limit" /> </td>
+                            </tr>
+                            <tr>
+                                <td><label class="label" for="productList">Product</label></td>
+                                <td>
+                                    <select class="form-control" id="productList" name="productList">
+                                        @foreach (var product in Model.products)
+                                        {
+                                            <option>ID: @product.id, @product.name </option>
+                                        }
+                                    </select>
+                                    <input type="hidden" name="stationID" value=@Model.station.id />
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" value="Add" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteTankModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                @using (Html.BeginForm("deleteTank", "welcome", FormMethod.Get))
+                {
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete Tank</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="w3-table">
+                            <tr>
+                                <td><label class="label" for="tankToDelete">Select tank to delete</label></td>
+                                <td>
+                                    <select class="w3-select" name="tankToDelete">
+                                        @foreach (var tank in Model.tanks)
+                                        {
+                                            <option>TankID: @tank.id</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" value="Delete" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="strapTableModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Stapping table</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="strapmodalbody1">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Level (%)</th>
+                                <th scope="col">Volume (Liter)</th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>10</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>20</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>30</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>40</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>50</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>60</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>70</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>80</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>90</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>100</td>
+                            <td>--</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-body" id="strapmodalbody2" style="display:none">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Level (%)</th>
+                                <th scope="col">Volume (Liter)</th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>10 </td>
+                            <td><input id="vol1" type="number" min="0" /> </td>
+                        </tr>
+                        <tr>
+                            <td>20</td>
+                            <td><input id="vol2" type="number" min="0" /> </td>
+                        </tr>
+                        <tr>
+                            <td>30</td>
+                            <td><input id="vol3" type="number" min="0" /> </td>
+                        </tr>
+                        <tr>
+                            <td>40</td>
+                            <td><input id="vol4" type="number" min="0" /> </td>
+                        </tr>
+                        <tr>
+                            <td>50</td>
+                            <td><input id="vol5" type="number" min="0" /> </td>
+                        </tr>
+                        <tr>
+                            <td>60</td>
+                            <td><input id="vol6" type="number" min="0" /> </td>
+                        </tr>
+                        <tr>
+                            <td>70</td>
+                            <td><input id="vol7" type="number" min="0" /> </td>
+                        </tr>
+                        <tr>
+                            <td>80</td>
+                            <td><input id="vol8" type="number" min="0" /> </td>
+                        </tr>
+                        <tr>
+                            <td>90</td>
+                            <td><input id="vol9" type="number" min="0" /> </td>
+                        </tr>
+                        <tr>
+                            <td>100</td>
+                            <td><input id="vol10" type="number" min="0" /> </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="strapmodalfooter1" class="modal-footer">
+                    <button id="strapmodalfooterbutton1" type="button" class="btn btn-primary">Modify</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                <div id="strapmodalfooter2" class="modal-footer" style="display:none">
+                    <button id="strapmodalfooterbutton2" type="button" class="btn btn-primary">Previous</button>
+                    <button id="strapmodalfooterbutton3" type="button" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#plusButton').click(function () {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                }
+        else {
+            <text>$('#addTankModal').modal('show');</text>
+                }}
+        })
+        $('#minusButton').click(function () {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                }
+        else {
+            <text>$('#deleteTankModal').modal('show');</text>
+                }}
+        })
+        $('.strapbutton').click(function () {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+            }
+            else {
+                <text>$('#strapTableModal').modal('show');</text>
+            }}
+        })
+        $('#strapmodalfooterbutton1').click(function () {
+            $('#strapmodalbody2').show();
+            $('#strapmodalbody1').hide();
+            $('#strapmodalfooter2').show();
+            $('#strapmodalfooter1').hide();
+        })
+        $('#strapmodalfooterbutton2').click(function () {
+            $('#strapmodalbody1').show();
+            $('#strapmodalbody2').hide();
+            $('#strapmodalfooter1').show();
+            $('#strapmodalfooter2').hide();
+        })
+        $('#strapmodalfooterbutton3').click(function () {
+            if($('#val1')<$('#val2'))
+                alert(hhh)
+        })
+        
+    })
+</script>

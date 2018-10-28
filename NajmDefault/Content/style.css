@@ -1,0 +1,75 @@
+body {
+    background: url('../images/station.jpg');
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    /*background-size:100% 100% ;*/
+}
+
+#box1 {
+    width: 700px;
+    height: 480px;
+    background: rgba( 0, 0, 0, 0.7);
+    color: #fff;
+    margin-top: 8%;
+    margin-left: 5%;
+    float: left;
+}
+
+#box2 {
+    width: 430px;
+    height: 480px;
+    background: rgba( 0, 0, 0, 0.7);
+    color: #fff;
+    margin-top: 8%;
+    margin-left: 5%;
+    padding: 10px;
+    float: left;
+}
+
+.posSlider {
+    margin-top: 85px;
+    height: 100%;
+}
+
+.customCar {
+    margin-top: 10%;
+    height: 100%;
+}
+
+#pos1 {
+    width: 100px;
+    height: 100px;
+    margin-top: -60px;
+}
+
+#pos2 {
+    width: 40px;
+    height: 40px;
+}
+
+.avatar2 {
+    width: 100px;
+    height: 100px;
+    margin-top: -60px;
+}
+
+.register {
+    margin-top: 10%;
+    margin-left: 80%;
+}
+
+.register-form {
+    display: none;
+}
+
+footer {
+    left: 0;
+    bottom: 0;
+    color: white;
+    text-align: center;
+    letter-spacing: 2px;
+    position: fixed;
+    width: 100%;
+}

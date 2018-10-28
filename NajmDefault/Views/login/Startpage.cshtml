@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "Startpage";
+    Layout = "~/views/shared/_layout.cshtml";
+}
+
+<div id="box1">
+    <div id="text-carousel" class="carousel slide " data-ride="carousel" style="height:100% ; margin-top:-10%">
+        <!-- Wrapper for slides -->
+        <div class="row  ">
+            <div class="col-xs-offset-2 col-xs-8">
+                <div class="carousel-inner ">
+                    <div class="item active ">
+                        <div class="posSlider">
+                            <p align="center"><img src="~/images/sms2i.png" id="pos1"> </p>
+                        </div>
+                        <div class="carousel-content">
+                            <div>
+                                <br /><br /><br />
+                                <h4 align="center">SMS2i</h4>
+                                <p align="justify">
+                                    SMS2i is the abbreviation of Services and Maintenance Company of Computer and Industrial Systems (Services et Maintenance des Systèmes Informatiques et
+                                    Industriels).
+                                    It is newly created by a group of university teachers in May 2008 in order to serve the industrial fabric in the field of service and maintenance
+                                    of industrial systems.
+                                    The main focus of the company's activities is the development of industrial process control and supervision projects.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item ">
+                        <div class="posSlider">
+                            <p align="center"><img src="~/images/alpha.png" id="pos1"> </p>
+                        </div>
+                        <div class="carousel-content">
+                            <div>
+                                <br /><br /><br />
+                                <h4 align="center">ALPHA ENGINEERING INTERNATIONAL</h4>
+                                <p align="justify">
+                                    We supply ready-to-use processes in addition to all types & ranges of static equipment such as pressure vessels, storage tanks, scrubbers, skimmers
+                                    (designed in accordance with international norms & standards).<br />
+                                    We are capable of the entire Project Engineering cycle for oil & gas plants and facilities in addition to ready standard technical documents for tendering
+                                    (mainly supply specification & technical data sheet).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item ">
+                        <div class="posSlider">
+                            <p align="center"><img src="~/images/avatar.png" id="pos1"> </p>
+                        </div>
+                        <div class="carousel-content">
+                            <div>
+                                <br /><br /><br />
+                                <h4 align="center">ABOUT THE APPLICATION</h4>
+                                <p align="justify">
+                                    We supply ready-to-use processes in addition to all types & ranges of static equipment such as pressure vessels, storage tanks, scrubbers, skimmers
+                                    (designed in accordance with international norms & standards).<br />
+                                    We are capable of the entire Project Engineering cycle for oil & gas plants and facilities in addition to ready standard technical documents for tendering
+                                    (mainly supply specification & technical data sheet)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Controls -->
+        <a class="left carousel-control customCar " href="#text-carousel" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        <a class="right carousel-control customCar" href="#text-carousel" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+    </div>
+</div>
+
+<div id="box2">
+    <p align="center">
+        <img src="~/images/avatar.png" class="avatar2">
+    </p>
+    <br />
+    @Html.Partial("_login")
+    @Html.Partial("_register")
+</div>
