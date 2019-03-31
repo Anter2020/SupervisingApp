@@ -1,0 +1,622 @@
+﻿@{
+    ViewBag.Title = "stationDetails";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+
+@model dynamic
+
+@{
+    bool verifrole = User.IsInRole("Admin");
+}
+<body style="margin-top:50px">
+
+    <nav class="w3-sidebar w3-collapse w3-transparent w3-border w3-border-dark-gray w3-animate-left w3-padding" style="z-index:3;width:15%;height:94%">
+        <div class="w3-bar-block">
+            <div class="w3-bar-item  w3-padding w3-small">StationID : @Model.station.id</div>
+            <div class="w3-bar-item  w3-padding w3-small">Countrie : @Model.station.pay</div>
+            <div class="w3-bar-item  w3-padding w3-small">Address : @Model.station.adresse</div>
+            <div class="w3-bar-item  w3-padding w3-small">Phone : @Model.station.tel</div>
+            <div class="w3-bar-item  w3-padding w3-small">ResponsibleID : @Model.responsible.cin</div>
+            <div class="w3-bar-item  w3-padding w3-small">ResponsiblePhone : @Model.responsible.tel</div>
+            <div class="w3-bar-item  w3-padding w3-small">ResponsibleMail : @Model.responsible.email</div>
+            <div class="w3-bar-item  w3-padding w3-small">TanksNumber : @Model.station.tnkNbr</div>
+            <div class="w3-bar-item  w3-padding w3-small">Connexion : @Model.station.connexion</div>
+            @*<div class="w3-bar-item  w3-padding w3-small">ETAT: @Model.station.etat</div>
+                <div class="w3-bar-item  w3-padding w3-small">STATUT: @Model.station.statut</div>*@
+            <div class="w3-bar-item  w3-padding w3-small"><button class="btn btn-dark" id="modif_station" data-toggle="modal" data-target="#modif_station_modal">Modify</button></div>
+        </div>
+    </nav>
+
+    <div class="modal" id="modif_station_modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="/welcome/modifyStation" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Station Information</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input class="w3-input" type="hidden" name="stationID" value=@Model.station.id />
+
+                        <table class="table table-hover">
+
+                            <tr>
+                                <td>Phone (+999-99)</td>
+                                <td><input class="w3-input" type="text" name="phone" /></td>
+                            </tr>
+                            <tr>
+                                <td>ResponsibleID</td>
+                                <td><input class="w3-input" type="text" name="ResponsibleID" /></td>
+                            </tr>
+                            <tr>
+                                <td>ResponsiblePhone</td>
+                                <td><input class="w3-input" type="text" name="ResponsiblePhone" /></td>
+                            </tr>
+                            <tr>
+                                <td>ResponsibleMail</td>
+                                <td><input class="w3-input" type="text" name="ResponsibleMail" /></td>
+                            </tr>
+                            <tr>
+                                <td>Connexion</td>
+                                <td>
+                                    <select class="w3-select" name="Connexion">
+                                        <option>SMS</option>
+                                        <option>Internet</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-left:15% ;padding-left:50px ;padding-right:50px">
+        @foreach (var tank in Model.tanks)
+        {
+            <div style="width:500px; height:450px ; float:left; padding-right:5px" class="w3-border w3-margin">
+                <div style="width:450px; height:250px" class="w3-border w3-margin w3-center">
+                    @{if (tank.liter > int.Parse(tank.min) && tank.liter < int.Parse(tank.max))
+                        {
+                            <div class="progress" style="-webkit-transform: rotate(-90deg) translate(-105px,-25px) ;width: 33%">
+                                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: @Math.Round(tank.niveau)%" aria-valuenow="@Math.Round(tank.niveau)" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="progress" style="-webkit-transform: rotate(-90deg) translate(-105px,-25px) ;width: 33%">
+                                <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: @Math.Round(tank.niveau)%" aria-valuenow="@Math.Round(tank.niveau)" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        }
+                    }
+                    <img src="~/images/icons/oil_tank.png" style="width:90% ;height:80%" />
+                </div>
+                <div style="-webkit-transform:translate(100px,-150px); color:indigo">Level (%) : @tank.niveau </div>
+                <div style="-webkit-transform:translate(100px,-150px); color:indigo">Level (Liter): @tank.liter </div>
+                <table class="w3-table " style="-webkit-transform:translate(10px,-50px)">
+                    <tr>
+                        <td><h6>Max : @tank.max</h6></td>
+                        <td>Poduct : </td>
+                        <td><h6>@tank.productName</h6></td>
+                    </tr>
+                    <tr>
+                        <td><h6>min : @tank.min</h6></td>
+                        <td><h6>TankID : @tank.id</h6></td>
+                        <td><h6>State : @tank.state </h6></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-secondary" id="modifbutton_@tank.id">Modify</button>
+                        </td>
+                        <td>
+                            <form action="/welcome/Tankhistory" method="get">
+                                <input type="hidden" name="selectedTank" value=@tank.id />
+                                <input type="hidden" name="prodName" value=@tank.productName />
+                                <button type="submit" class="btn btn-secondary">Show History</button>
+                            </form>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-secondary" id="strapbutton_@tank.id">Strapping table</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+        <div style="width:350px; height:350px ; float:left ; padding-top:100px" class="w3-border w3-margin w3-center">
+            <img src="~/images/icons/plus.png" style="width:120px ;height:120px" class="w3-hover-opacity" id="plusButton" />
+            <img src="~/images/icons/minus.png" style="width:120px ;height:120px" class="w3-hover-opacity" id="minusButton" />
+        </div>
+    </div>
+
+    <div class="modal" id="addTankModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                @using (Html.BeginForm("addTank", "welcome", FormMethod.Get))
+                {
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add new Tank</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="w3-table">
+                            <tr>
+                                <td><label class="label" for="min">min limit</label></td>
+                                <td><input type="number" class="form-control" name="min" min="0" id="min" placeholder="enter min limit" /> </td>
+                            </tr>
+                            <tr>
+                                <td><label class="label" for="max">Max limit</label></td>
+                                <td><input type="number" class="form-control" name="max" min="0" id="max" placeholder="enter max limit" /> </td>
+                            </tr>
+                            <tr>
+                                <td><label class="label" for="productList">Product</label></td>
+                                <td>
+                                    <select class="form-control" id="productList" name="productList">
+                                        @foreach (var product in Model.products)
+                                        {
+                                            <option>ID: @product.id, @product.name </option>
+                                        }
+                                    </select>
+                                    <input type="hidden" name="stationID" value=@Model.station.id />
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" value="Add" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteTankModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                @using (Html.BeginForm("deleteTank", "welcome", FormMethod.Get))
+                {
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete Tank</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="w3-table">
+                            <tr>
+                                <td><label class="label" for="tankToDelete">Select tank to delete</label></td>
+                                <td>
+                                    <select class="w3-select" name="tankToDelete">
+                                        @foreach (var tank in Model.tanks)
+                                        {
+                                            <option>TankID: @tank.id</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" value="Delete" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+
+    @foreach (var barémage in Model.barémages)
+    {
+        <div class="modal" id="strapTableModal_@barémage.resID">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Stapping table</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="strapmodalbody1_@barémage.resID">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Level (%)</th>
+                                    <th scope="col">Volume (Liter)</th>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td>05</td>
+                                <td>@barémage.vol1</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>@barémage.vol2</td>
+                            </tr>
+                            <tr>
+                                <td>15</td>
+                                <td>@barémage.vol3</td>
+                            </tr>
+                            <tr>
+                                <td>20</td>
+                                <td>@barémage.vol4</td>
+                            </tr>
+                            <tr>
+                                <td>25</td>
+                                <td>@barémage.vol5</td>
+                            </tr>
+                            <tr>
+                                <td>30</td>
+                                <td>@barémage.vol6</td>
+                            </tr>
+                            <tr>
+                                <td>35</td>
+                                <td>@barémage.vol7</td>
+                            </tr>
+                            <tr>
+                                <td>40</td>
+                                <td>@barémage.vol8</td>
+                            </tr>
+                            <tr>
+                                <td>45</td>
+                                <td>@barémage.vol9</td>
+                            </tr>
+                            <tr>
+                                <td>50</td>
+                                <td>@barémage.vol10</td>
+                            </tr>
+                            <tr>
+                                <td>55</td>
+                                <td>@barémage.vol11</td>
+                            </tr>
+                            <tr>
+                                <td>60</td>
+                                <td>@barémage.vol12</td>
+                            </tr>
+                            <tr>
+                                <td>65</td>
+                                <td>@barémage.vol13</td>
+                            </tr>
+                            <tr>
+                                <td>70</td>
+                                <td>@barémage.vol14</td>
+                            </tr>
+                            <tr>
+                                <td>75</td>
+                                <td>@barémage.vol15</td>
+                            </tr>
+                            <tr>
+                                <td>80</td>
+                                <td>@barémage.vol16</td>
+                            </tr>
+                            <tr>
+                                <td>85</td>
+                                <td>@barémage.vol17</td>
+                            </tr>
+                            <tr>
+                                <td>90</td>
+                                <td>@barémage.vol18</td>
+                            </tr>
+                            <tr>
+                                <td>95</td>
+                                <td>@barémage.vol19</td>
+                            </tr>
+                            <tr>
+                                <td>100</td>
+                                <td>@barémage.vol20</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modal-body" id="strapmodalbody2_@barémage.resID" style="display:none">
+                        <form id="strapForm__@barémage.resID" method="post" action="/Welcome/modifBarémage">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Level (%)</th>
+                                        <th scope="col">Volume (Liter)</th>
+                                    </tr>
+                                </thead>
+
+                                <tr>
+                                    <td><input type="hidden" name="tankID" value=@barémage.resID /></td>
+                                </tr>
+                                <tr>
+                                    <td>05 </td>
+                                    <td><input name="vol1" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>10 </td>
+                                    <td><input name="vol2" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>15 </td>
+                                    <td><input name="vol3" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>20</td>
+                                    <td><input name="vol4" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>25 </td>
+                                    <td><input name="vol5" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>30</td>
+                                    <td><input name="vol6" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>35 </td>
+                                    <td><input name="vol7" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>40</td>
+                                    <td><input name="vol8" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>45 </td>
+                                    <td><input name="vol9" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>50</td>
+                                    <td><input name="vol10" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>55 </td>
+                                    <td><input name="vol11" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>60</td>
+                                    <td><input name="vol12" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>65 </td>
+                                    <td><input name="vol13" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>70</td>
+                                    <td><input name="vol14" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>75 </td>
+                                    <td><input name="vol15" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>80</td>
+                                    <td><input name="vol16" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>85 </td>
+                                    <td><input name="vol17" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>90</td>
+                                    <td><input name="vol18" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>95 </td>
+                                    <td><input name="vol19" type="number" min="0" /> </td>
+                                </tr>
+                                <tr>
+                                    <td>100</td>
+                                    <td><input name="vol20" type="number" min="0" /> </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                    <div id="strapmodalfooter1_@barémage.resID" class="modal-footer">
+                        <button id="strapmodalfooterbutton1_@barémage.resID" type="button" class="btn btn-primary">Modify</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                    <div id="strapmodalfooter2_@barémage.resID" class="modal-footer" style="display:none">
+                        <button id="strapmodalfooterbutton2_@barémage.resID" type="button" class="btn btn-primary">Previous</button>
+                        <button id="strapmodalfooterbutton3_@barémage.resID" type="button" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @foreach (var tank in Model.tanks)
+    {
+        <div class="modal" id="modiftankModal_@tank.id">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form action="/welcome/modiftank/" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Modify Tank Informations</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="tankID" value=@tank.id />
+                            <table class="table table-hover">
+                                <tr>
+                                    <td>min</td>
+                                    <td>
+                                        <input type="number" min="0" name="min" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Max</td>
+                                    <td>
+                                        <input type="number" min="0" name="Max" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Product</td>
+                                    <td>
+                                        <select name="selectedProduct" class="form-control-sm" style="width:140px">
+                                            @foreach (var product in Model.products)
+                                            {
+                                                <option value=@product.id>@product.name</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Modify</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+
+</body>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#plusButton').click(function () {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                }
+        else {
+            <text>$('#addTankModal').modal('show');</text>
+                }}
+        })
+        $('#minusButton').click(function () {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                }
+        else {
+            <text>$('#deleteTankModal').modal('show');</text>
+                }}
+        })
+
+        @foreach (var barémage in Model.barémages)
+        {
+            <text>
+
+        $('#strapbutton_@barémage.resID').click(function () {
+            @{if (!verifrole) {
+                <text> alert('Please login as administrator') </text>
+                }
+                else {
+                    <text>
+                        $('#strapTableModal_@barémage.resID').modal('show')
+
+            </text>
+                }}
+
+        })
+        $('#strapmodalfooterbutton1_@barémage.resID').click(function () {
+            $('#strapmodalbody2_@barémage.resID').show();
+            $('#strapmodalbody1_@barémage.resID').hide();
+            $('#strapmodalfooter2_@barémage.resID').show();
+            $('#strapmodalfooter1_@barémage.resID').hide();
+        })
+        $('#strapmodalfooterbutton2_@barémage.resID').click(function () {
+            $('#strapmodalbody1_@barémage.resID').show();
+            $('#strapmodalbody2_@barémage.resID').hide();
+            $('#strapmodalfooter1_@barémage.resID').show();
+            $('#strapmodalfooter2_@barémage.resID').hide();
+        })
+        $('#strapmodalfooterbutton3_@barémage.resID').click(function () {
+            $( "#strapForm__@barémage.resID" ).submit()
+        })
+        </text>
+                }
+
+        @foreach (var tank in Model.tanks)
+        {
+            <text>
+
+        $('#modifbutton_@tank.id').click(function () {
+            @{
+                if (!verifrole)
+                {
+                <text> alert('Please login as administrator') </text>
+                }
+                else
+                {
+                    <text>
+                                $('#modiftankModal_@tank.id').modal('show')
+                    </text>
+                }
+              }
+                        })
+
+        </text>
+        }
+
+                var timer=0;
+                function loop() {
+
+                    if (timer==10)
+                        location.reload(true)
+                    if ($('.modal').is(':visible'))
+            {
+                    console.log("visible");
+                    console.log($('.modal').is(':visible'));
+                    timer=0;
+                }
+                setTimeout(loop, 1000);
+                timer=timer+1;
+                //console.log(timer);
+            }
+
+            loop();
+
+            //var modalisshown='false';
+            //console.log(timeoutHandle);
+            //$('.modal').on('shown.bs.modal', function (e) {
+            //    modalisshown='true';
+            //    console.log(timeoutHandle);
+            //    console.log(modalisshown);
+            //})
+            //if (modalisshown=='true'){
+            //    window.clearTimeout(timeoutHandle);
+            //    console.log('timeout cleared');
+            //}
+            //var ShownStrapModal= $('.modal').hasClass('in') ;
+            //var ShownStrapModal= $('.modal').hasClass('shown') ;
+            //var ShownStrapModal=($('.modal').data('bs.modal') || {}).isShown
+            //$('.modal').on('hidden.bs.modal', function (e) {
+            //    HiddenStrapModal = true;
+            //    alert(''+HiddenStrapModal)
+            //})
+            //if (ShownStrapModal)
+            //{
+            //    alert(ShownStrapModal)
+            //}
+            //else
+            //{
+            //    alert(ShownStrapModal)
+            //    setTimeout("location.reload(true);",10000);
+            //}
+            //if ($('#strapTableModal_1097').is(':visible')) {
+            //    //alert($('#strapTableModal_1097').is(':visible'))
+            //    clearTimeout(timeoutHandle);
+            //    console.log("visible");
+            //    console.log(timeoutHandle);
+            //}
+            //else if(!$('#strapTableModal_1097').is(':visible'))
+            //{
+            //    var timeoutHandle = window.setTimeout("location.reload(true);",5000)
+            //    console.log($('#strapTableModal_1097').is(':visible'))
+            //    console.log(timeoutHandle)
+            //}
+            //else
+            //{
+            //    console.log("shit")
+            //}
+
+        })
+</script>

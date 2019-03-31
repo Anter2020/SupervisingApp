@@ -1,0 +1,155 @@
+﻿
+@{
+    ViewBag.Title = "History";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+
+@model dynamic
+
+<script type="text/javascript" src="~/Scripts/canvasjs.min.js"></script>
+
+<div class="w3-padding" style="margin-right:30px ;margin-left:30px ">
+    <form class="w3-border w3-padding" action="/Welcome/history" method="get" style="min-width:900px">
+        <fieldset>
+            <legend> History of product consumption</legend>
+            <table class="w3-table">
+                <tr>
+                    <td>
+                        <label>Product :</label>
+                    </td>
+                    <td>
+                        <select name="selectedProduct" class="form-control-sm" style="width:140px">
+                            @foreach (var product in Model.products)
+                            {
+                                <option value=@product.id>@product.name</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <label>Countrie :</label>
+                    </td>
+                    <td>
+                        <select name="selectedCountrie" class="form-control-sm" style="width:140px">
+                            @foreach (var countrie in Model.countries)
+                            {
+                                <option>@countrie.name</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <label>From site :</label>
+                    </td>
+                    <td>
+                        <select name="selectedSite" class="form-control-sm" style="width:140px">
+                            <option selected>All</option>
+                            @foreach (var site in Model.sites)
+                            {
+                                <option value=@site.id>@site.address</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <label>To station :</label>
+                    </td>
+                    <td>
+                        <select name="selectedStation" class="form-control-sm" style="width:140px">
+                            <option selected>All</option>
+                            @foreach (var station in Model.stations)
+                            {
+                                <option value=@station.id>@station.adresse</option>
+                            }
+                        </select>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <label>From :</label>
+                    </td>
+                    <td>
+                        <input name="startDate" class="form-control-sm" type="date" required style="width:140px" />
+                    </td>
+                    <td>
+                        <label>To :</label>
+                    </td>
+                    <td>
+                        <input name="finDate" class="form-control-sm" type="date" required style="width:140px" />
+                    </td>
+                    <td>
+                        <label>search per :</label>
+                    </td>
+                    <td>
+                        <select name="searchPer" class="form-control-sm" style="width:140px">
+                            <option>Day</option>
+                            <option>Month</option>
+                            <option>Year</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button type="submit" class="btn btn-primary btn-sm">Search <i class="fas fa-search"></i></button>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+    <hr />
+    <div class="w3-center">
+        <div id="alert" style="display:none">No Data Available !</div>
+        <div id="chartContainer" style="height: 370px; width: 100%; display:none"></div>
+        <hr />
+        <div id="chartContainer2" style="height: 370px; width: 100%; display:none"></div>
+    </div>
+</div>
+
+<script>
+    window.onload = function () {
+        @{
+            if (ViewBag.DataPoints == "nodata")
+            {<text>
+                $('#alert').show();
+                $('#chartContainer').hide();
+                $('#chartContainer2').hide();
+            </text>
+            }
+            else if (ViewBag.DataPoints != null)
+            {
+            <text>
+                $('#alert').hide();
+                $('#chartContainer').show();
+                $('#chartContainer2').show();
+                var chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: true,
+                theme: "dark1",//"light2",  "light1", "light2", "dark1", "dark2"
+                title: {
+                    text: "Product consumption"
+                },
+                axisY: {
+                    title: "Product quantity (liter)"
+                },
+                data: [{
+                    type: "line",
+                    dataPoints: @Html.Raw(ViewBag.DataPoints),
+                }]
+                });
+                chart.render();
+
+                var chart2 = new CanvasJS.Chart("chartContainer2", {
+                    animationEnabled: true,
+                    theme: "dark1", //"light2",  "dark1" , "light2", "dark1", "light1",
+                    //title: {
+                    //    text: "Product consumption"
+                    //},
+                    //axisY: {
+                    //    title: "Product quantity (liter)"
+                    //},
+                    data: [{
+                        type: "pie",
+                        dataPoints: @Html.Raw(ViewBag.DataPoints),
+                    }]
+                });
+                chart2.render();
+            </text>
+                }
+            }
+    }
+</script>

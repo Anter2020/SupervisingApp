@@ -1,0 +1,59 @@
+﻿@{
+    Layout = "~/views/shared/_layouthome.cshtml";
+    ViewBag.Title = "Home";
+}
+
+@*<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery.slimscroll.min.js"></script>*@
+
+<div class="menu">
+    <div id="inner-content-div">
+        @Html.Partial("refreshCountries")
+
+        @*popup to add/delete countrie *@
+        @Html.Partial("addDeleteCountrie")
+    </div>
+</div>
+
+<div class="footer">
+    <div class="w3-center" style="padding-top:10px">
+        <p class="w3-opacity"> <i class="fa fa-fw fa-map-marker "></i> Immeuble Néodem, Boulevard 14 janvier 4013, Messaadine, Sousse, Tunisia </p>
+        <p class="w3-opacity"> <i class="fa fa-phone fa-fw"></i> Phone/Fax : +216 73 284 160</p>
+        <p class="w3-opacity"> <i class="fa fa-fw fa-envelope"></i> Email : contact.sms2i@gmail.tn </p>
+        <p class="w3-opacity"> <i class="fa fa-globe fa-fw"></i> Website : <a href="http://www.sms2i.com.tn"> www.sms2i.com.tn </a> </p>
+        <p class="w3-opacity"> <img src="~/images/sms2i.png" style="width:2%" /> Copyright &copy; SMS2i </p>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$('#inner-content-div').slimScroll({
+        //    height: '100%',
+        //    width: '101%'
+        //})
+
+        $('#addtbutton').click(function () {
+            //submit form with json (NB POST Method is obligatory in JSON)
+            $.ajax({
+                url: "/welcome/VerifCountrie",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    countrieName: $('#countrieToAdd').val()
+                }),
+                success: function (dd) {
+                    if (dd) alert("This countrie alredy exist !")
+                    else $('#addCountrieForm').submit()
+                }
+            })
+        })
+
+        $('#delbutton1').click(function () {
+            var result = confirm("All data related to this countrie will be deleted, continue ?");
+            if (result == true) {
+                $("#deleteform").submit();
+            }
+        })
+    })
+
+</script>
