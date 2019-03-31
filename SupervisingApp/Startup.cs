@@ -14,7 +14,7 @@ namespace NajmDefault
             ConfigureAuth(app);
             app.MapSignalR();
             createRolesandUsers();
-            // test mod test 1
+            // test mod test 1 2
         }
 
         // In this method we will create default User roles and Admin user for login   
